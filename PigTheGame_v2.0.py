@@ -38,6 +38,18 @@ class HumanPlayer(Player):
         else : 
             print("\nGame Crashed!")
             sys.exit()
+
+class PlayerFactory:
+    @staticmethod
+    def create_player(player_type):
+        if player_type == 'human':
+            return HumanPlayer(player_type)
+        elif player_type == 'computer':
+            return ComputerPlayer(player_type)
+        else:
+            raise ValueError(f"Invalid player type: {player_type}")     
+
+
 class PigTheGame:
     def __init__(self, num_players):
         self.num_players = num_players       
@@ -51,6 +63,7 @@ class PigTheGame:
         return False
     
 """
+
     def reset_game(self):
             self.players = [Player(input(f"Enter Player {i + 1}'s name: ")) for i in range(self.num_players)]
             self.current_player = 0
