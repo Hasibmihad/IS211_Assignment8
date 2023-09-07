@@ -52,7 +52,7 @@ class PlayerFactory:
 
 class TimedGameProxy:
     def __init__(self, playerList):
-        self.num_players = playerList       
+        self.players = playerList       
         self.current_player = 0
         self.dice = Dice()
 
@@ -68,7 +68,7 @@ class TimedGameProxy:
         while (True):
             roll = self.dice.roll()
             if roll == 1:
-                    print(f"{player.name} rolled a 1 and lost his turn.")
+                    print(f"{player.name} rolled a 1......so.....lost his turn.")
                     point=0
                     str=player.__str__()
                     print(str)
@@ -84,8 +84,6 @@ class TimedGameProxy:
                         break
 
             ch=player.make_decision()
-
-
             if ch.lower() == 'h':
                 break
             elif ch.lower() == 'r':
