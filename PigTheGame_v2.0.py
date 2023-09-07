@@ -135,8 +135,19 @@ if __name__ == "__main__":
     player1_type = args.player1
     player2_type = args.player2
 
+
     player1 = PlayerFactory.create_player(player1_type)
     player2 = PlayerFactory.create_player(player2_type)
 
     game = TimedGameProxy([player1, player2], args.timed)
     game.play()
+
+    while (True):
+              print ("<................................................................................>")
+              print("Player Another Game with same players with same time?? Press y to Play , otherwise presss anything to exit ")
+              ch = input().lower()
+              if ch == 'y':
+                game = TimedGameProxy([player1, player2], args.timed)
+                game.play()
+              else : 
+                  break   
