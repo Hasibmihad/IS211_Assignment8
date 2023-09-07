@@ -50,23 +50,12 @@ class PlayerFactory:
             raise ValueError(f"Invalid player type: {player_type}")     
 
 
-class PigTheGame:
-    def __init__(self, num_players):
-        self.num_players = num_players       
+class TimedGameProxy:
+    def __init__(self, playerList):
+        self.num_players = playerList       
         self.current_player = 0
         self.dice = Dice()
-        self.reset_game()
-    """def is_game_over(self):
-        for player in self.players:
-            if player.score >= 10:
-                return True
-        return False
-    
-"""
 
-    def reset_game(self):
-            self.players = [Player(input(f"Enter Player {i + 1}'s name: ")) for i in range(self.num_players)]
-            self.current_player = 0
 
 
     def change_player(self):
@@ -121,11 +110,25 @@ class PigTheGame:
             print(f"{winners[0].name} is the winner with {winners[0].score} points!")
 
 
+"""def is_game_over(self):
+        for player in self.players:
+            if player.score >= 10:
+                return True
+        return False
+    
+"""
+
+""" def reset_game(self):
+            self.players = [Player(input(f"Enter Player {i + 1}'s name: ")) for i in range(self.num_players)]
+            self.current_player = 0
+"""
+
+    
 if __name__ == "__main__":
     print ("Welcome T0 The PIG GAME")
     print ("<................................................................................>")
     random.seed(0)
-    game = PigTheGame(2)
+    game = TimedGameProxy(2)
     game.play()
 
 """ 
