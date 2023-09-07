@@ -20,7 +20,24 @@ class Player:
     def __str__(self):
         return f"{self.name} ---- > ({self.score} points)"
 
+class ComputerPlayer(Player):
+    def make_decision(self):
+        if self.score < 25 or self.score < 100-self.score:
+            return 'r'
+        else:
+            return 'h'
+        
 
+class HumanPlayer(Player):
+    def make_decision(self):
+        ch=input("<------------- Press  'r'  to Roll the dice, 'h' to Hold : --------- : ")
+        if ch.lower() == 'h':
+                return 'h'
+        elif ch.lower() == 'r':
+                return 'r'
+        else : 
+            print("\nGame Crashed!")
+            sys.exit()
 class PigTheGame:
     def __init__(self, num_players):
         self.num_players = num_players       
@@ -64,16 +81,16 @@ class PigTheGame:
                     if pointstoshow>=100:
                         break
 
-                     
-            ch=input("<------------- Press  'r'  to Roll the dice, 'h' to Hold : --------- : ")
+            ch=player.make_decision()
+
+
             if ch.lower() == 'h':
                 break
             elif ch.lower() == 'r':
-                continue
-            else : 
-                print("\nGame Crashed!")
-                sys.exit()
-        player.score+=point  
+                continue          
+                     
+            
+        player.addScore(point)
 
         print(f"{player.name}'s turn is over. {player.name} scored {player.score}.")
         print ("<................................................................................>")
@@ -98,7 +115,8 @@ if __name__ == "__main__":
     game = PigTheGame(2)
     game.play()
 
-   """ parser = argparse.ArgumentParser()
+""" 
+   parser = argparse.ArgumentParser()
     parser.add_argument("numPlayers", type=int, help="numberofPlayers")
     args = parser.parse_args()
     if args.numPlayers:
