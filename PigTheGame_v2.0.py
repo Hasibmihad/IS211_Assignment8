@@ -1,155 +1,142 @@
 import random
 import sys
-import argparse
 import time
+import argparse
 
 class Dice:
     def roll(self):
         return random.randint(1, 6)
-    
-
 
 class Player:
     def __init__(self, name):
         self.name = name
         self.score = 0
 
-    def addScore(self, roll_points):
+    def add_score(self, roll_points):
         self.score += roll_points
 
     def __str__(self):
-        return f"{self.name} ---- > ({self.score} points)"
+        return f"{self.name} ----> ({self.score} points)"
 
 class ComputerPlayer(Player):
     def make_decision(self):
-        if self.score < 25 or self.score < 100-self.score:
-            return 'r'
-        else:
+        time.sleep(0.5)
+        if self.score < 25 or self.score < (100 - self.score):
             return 'h'
-        
+        else:
+            return 'r'
 
 class HumanPlayer(Player):
     def make_decision(self):
-        ch=input("<------------- Press  'r'  to Roll the dice, 'h' to Hold : --------- : ")
-        if ch.lower() == 'h':
-                return 'h'
-        elif ch.lower() == 'r':
-                return 'r'
-        else : 
-            print("\nGame Crashed!")
-            sys.exit()
+            while (True):
+                ch = input("<------------- Press 'r' to Roll the dice, 'h' to Hold : --------- : ")
+                if ch.lower() == 'h' or ch.lower() == 'r':
+                    return ch.lower()
+                else:
+                    print("Invalid input. Please enter 'r' or 'h'.")
 
 class PlayerFactory:
     @staticmethod
     def create_player(player_type):
         if player_type == 'human':
-            return HumanPlayer(player_type)
+            name='HUMAN'
+            return HumanPlayer(name)
         elif player_type == 'computer':
-            return ComputerPlayer(player_type)
+            name='COMPUTER'
+            return ComputerPlayer(name)
         else:
             raise ValueError(f"Invalid player type: {player_type}")     
 
-
 class TimedGameProxy:
-    def __init__(self, playerList):
-        self.players = playerList       
+    def __init__(self, player_list, timed):
+        self.players = player_list       
         self.current_player = 0
         self.dice = Dice()
-
-
+        self.timed = timed
+        self.start_time = time.time()
+        self.timeflag=False
 
     def change_player(self):
         self.current_player = (self.current_player + 1) % len(self.players)
 
     def play_turn(self):
+        elapsed_time = time.time() - self.start_time
+        if elapsed_time >= self.timed:
+            self.timeflag=True
+            print("One minute has elapsed. Game over!")
+            return 
+
         player = self.players[self.current_player]
         print(f"{player.name}'s turn.")
-        point=0
-        while (True):
+        print("<..................................>")
+        point = 0 
+
+        while True:
             roll = self.dice.roll()
             if roll == 1:
-                    print(f"{player.name} rolled a 1......so.....lost his turn.")
-                    point=0
-                    str=player.__str__()
-                    print(str)
-                    break
-                
-            else :
-                    point+=roll
-                    print(f"{player.name} rolled a {roll}")
-                    pointstoshow=player.score+point
-                    print (f"{player.name} scored {pointstoshow} points")
-
-                    if pointstoshow>=100:
-                        break
-
-            ch=player.make_decision()
-            if ch.lower() == 'h':
+                print(f"{player.name} rolled a 1 ............. and ........lost his turn.")
+                point = 0
+                print(player)
                 break
-            elif ch.lower() == 'r':
-                continue          
-                     
-            
-        player.addScore(point)
+            else:
+                point += roll
+                print(f"{player.name} rolled a {roll}")
+                points_to_show = player.score + point
+                print(f"{player.name} scored {points_to_show} points")
+
+                if points_to_show >= 100:
+                    break
+
+            decision = player.make_decision()
+            if decision == 'h':
+                break
+            elif decision == 'r':
+                continue
+
+        player.add_score(point)
 
         print(f"{player.name}'s turn is over. {player.name} scored {player.score}.")
-        print ("<................................................................................>")
+        print("<................................................................................>")
         self.change_player()  
 
-  
-
     def play(self):
-        while all(player.score < 100 for player in self.players):
+        while (all(player.score < 100 for player in self.players)) and self.timeflag==False:
             self.play_turn()
+        if (self.timeflag==True):
+            dict2= {}
+            dict2[self.players[0].name]=self.players[0].score
+            dict2[self.players[1].name]=self.players[1].score
+            dict(sorted(dict2.items(), key=lambda item: item[1]))
+            second_pair = list(dict2.items())[1]
+            second_key, second_value = second_pair
+            print(f"{second_key} is the winner with {second_value} points!")
+
+
 
         winners = [player for player in self.players if player.score >= 100]
-        print("\nGame Over!")
         if len(winners) == 1:
             print(f"{winners[0].name} is the winner with {winners[0].score} points!")
 
 
-"""def is_game_over(self):
-        for player in self.players:
-            if player.score >= 10:
-                return True
-        return False
-    
-"""
 
-""" def reset_game(self):
-            self.players = [Player(input(f"Enter Player {i + 1}'s name: ")) for i in range(self.num_players)]
-            self.current_player = 0
-"""
 
-    
 if __name__ == "__main__":
-    print ("Welcome T0 The PIG GAME")
-    print ("<................................................................................>")
-    random.seed(0)
-    game = TimedGameProxy(2)
-    game.play()
 
-""" 
-   parser = argparse.ArgumentParser()
-    parser.add_argument("numPlayers", type=int, help="numberofPlayers")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("player1", type=str, choices=["human", "computer"], default="human", help="Type of Player 1")
+    parser.add_argument("player2", type=str, choices=["human", "computer"], default="human", help="Type of Player 2")
+    parser.add_argument("timed", type=int,default=60, help="TIMER")
     args = parser.parse_args()
-    if args.numPlayers:
-           print ("Welcome T0 The PIG GAME")
-           print ("<................................................................................>")
-           random.seed(0)
-           game = PigTheGame(args.numPlayers)
-           game.play()
-           while (True):
-              print ("<................................................................................>")
-              print("Player Another Game with same no of plyers ? Press y to Play, otherwise presss anything to exit ")
-              ch = input().lower()
-              if ch == 'y':
-                game = PigTheGame(args.numPlayers)
-                game.play()
-              else : 
-                  break   
-    else:
-        print("Exiting the program.")
-        sys.exit()"""
 
-  
+    print("Welcome To The PIG GAME")
+    print("<................................................................................>")
+    random.seed(0)
+        
+    player1_type = args.player1
+    player2_type = args.player2
+
+    player1 = PlayerFactory.create_player(player1_type)
+    player2 = PlayerFactory.create_player(player2_type)
+
+    game = TimedGameProxy([player1, player2], args.timed)
+    game.play()
